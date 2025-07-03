@@ -1,0 +1,62 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<section class="hero">
+    <div class="hero-content">
+        <h1>Adventure Awaits</h1>
+        <p>Rent the best outdoor gear for your next adventure</p>
+        <a href="#products" class="hero-btn">Explore Gear</a>
+    </div>
+    <div class="hero-image">
+        <i class="fas fa-mountain hero-icon"></i>
+    </div>
+</section>
+
+<section id="categories" class="categories-section">
+    <div class="container">
+        <h2>Shop by Category</h2>
+        <div class="categories-grid">
+            {% for category in categories %}
+                <div class="category-card">
+                    <div class="category-icon">
+                        <i class="fas fa-{% if 'tent' in category.name.lower %}campground{% elif 'backpack' in category.name.lower %}hiking{% elif 'climb' in category.name.lower %}mountain{% elif 'water' in category.name.lower %}swimmer{% else %}mountain{% endif %}"></i>
+                    </div>
+                    <h3>{{ category.name }}</h3>
+                    <p>{{ category.description|truncatewords:10 }}</p>
+                    <a href="{% url 'products_by_category' category.id %}" class="category-link">View Products</a>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+
+<section id="products" class="products-section">
+    <div class="container">
+        <h2>Featured Products</h2>
+        <div class="products-grid">
+            {% for product in products %}
+                <div class="product-card">
+                    <div class="product-image">
+                        {% if product.image_url %}
+                            <img src="{{ product.image_url }}" alt="{{ product.name }}">
+                        {% else %}
+                            <div class="product-placeholder">
+                                <i class="fas fa-mountain"></i>
+                            </div>
+                        {% endif %}
+                    </div>
+                    <div class="product-info">
+                        <h3>{{ product.name }}</h3>
+                        <p class="product-category">{{ product.category.name }}</p>
+                        <p class="product-description">{{ product.description|truncatewords:15 }}</p>
+                        <div class="product-footer">
+                            <span class="product-price">Rs{{ product.price_per_day }}/day</span>
+                            <a href="{% url 'product_detail' product.id %}" class="product-btn">View Details</a>
+                        </div>
+                    </div>
+                </div>
+            {% endfor %}
+        </div>
+    </div>
+</section>
+{% endblock %}

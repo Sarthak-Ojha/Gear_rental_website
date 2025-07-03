@@ -1,0 +1,88 @@
+{% extends 'base.html' %}
+
+{% block title %}Shopping Cart - Adventure Gear Rental{% endblock %}
+
+{% block content %}
+<div class="container">
+    <h1><i class="fas fa-shopping-cart"></i> Shopping Cart</h1>
+    
+    {% if cart_items %}
+        <div class="cart-content">
+            <div class="cart-items">
+                {% for item in cart_items %}
+                    <div class="cart-item">
+                        <div class="cart-item-image">
+                            {% if item.product.image_url %}
+                                <img src="{{ item.product.image_url }}" alt="{{ item.product.name }}">
+                            {% else %}
+                                <div class="product-placeholder">
+                                    <i class="fas fa-mountain"></i>
+                                </div>
+                            {% endif %}
+                        </div>
+                        
+                        <div class="cart-item-details">
+                            <h3><a href="{% url 'product_detail' item.product.id %}">{{ item.product.name }}</a></h3>
+                            <p class="item-category">{{ item.product.category.name }}</p>
+                            <p class="item-price">Rs{{ item.product.price_per_day }}/day</p>
+                        </div>
+                        
+                        <div class="cart-item-controls">
+                            <form method="POST" action="{% url 'update_cart_item' item.id %}" class="update-form">
+                                {% csrf_token %}
+                                <div class="form-group">
+                                    <label>Quantity:</label>
+                                    <input type="number" name="quantity" value="{{ item.quantity }}" min="1" max="10">
+                                </div>
+                                <div class="form-group">
+                                    <label>Days:</label>
+                                    <input type="number" name="rental_days" value="{{ item.rental_days }}" min="1" max="30">
+                                </div>
+                                <button type="submit" class="btn btn-secondary btn-sm">Update</button>
+                            </form>
+                            
+                            <div class="item-total">
+                                <p><strong>Rs{{ item.get_total_price }}</strong></p>
+                            </div>
+                            
+                            <a href="{% url 'remove_from_cart' item.id %}" 
+                               class="btn btn-danger btn-sm"
+                               onclick="return confirm('Remove this item from cart?')">
+                                <i class="fas fa-trash"></i>
+                            </a>
+                        </div>
+                    </div>
+                {% endfor %}
+            </div>
+            
+            <div class="cart-summary">
+                <div class="summary-card">
+                    <h3>Order Summary</h3>
+                    <div class="summary-line">
+                        <span>Total Items:</span>
+                        <span>{{ cart_items|length }}</span>
+                    </div>
+                    <div class="summary-line total">
+                        <span>Total Amount:</span>
+                        <span><strong>Rs{{ cart.get_total_price }}</strong></span>
+                    </div>
+                    
+                    <div class="cart-actions">
+                        <a href="{% url 'home' %}" class="btn btn-secondary">Continue Shopping</a>
+                        <a href="{% url 'checkout' %}" class="btn btn-primary">Proceed to Checkout</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    {% else %}
+        <div class="empty-cart">
+            <div class="empty-cart-icon">
+                <i class="fas fa-shopping-cart"></i>
+            </div>
+            <h2>Your cart is empty</h2>
+            <p>Looks like you haven't added any gear to your cart yet.</p>
+            <a href="{% url 'home' %}" class="btn btn-primary">Start Shopping</a>
+        </div>
+    {% endif %}
+</div>
+{% endblock %}

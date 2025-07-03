@@ -1,0 +1,103 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block title %}Adventure Gear Rental{% endblock %}</title>
+    {% load static %}
+    <link rel="stylesheet" href="{% static 'css/style.css' %}">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body>
+    <nav class="navbar">
+        <div class="nav-container">
+            <div class="nav-logo">
+                <a href="{% url 'home' %}">
+                    <i class="fas fa-mountain"></i>
+                    Adventure Gear
+                </a>
+            </div>
+            
+            <div class="nav-menu">
+                <form class="search-form" method="GET" action="{% url 'search_products' %}">
+                    <input type="text" name="q" placeholder="Search gear..." class="search-input">
+                    <button type="submit" class="search-btn"><i class="fas fa-search"></i></button>
+                </form>
+                
+                <div class="nav-links">
+                    <a href="{% url 'home' %}" class="nav-link">Home</a>
+                    
+                    {% if user.is_authenticated %}
+                        <a href="{% url 'cart' %}" class="nav-link">
+                            <i class="fas fa-shopping-cart"></i> Cart
+                        </a>
+                        <span class="nav-link">Hi, {{ user.first_name|default:user.username }}!</span>
+                        
+                        <!-- Logout via POST request -->
+                        <form method="POST" action="{% url 'logout' %}" style="display: inline;">
+                            {% csrf_token %}
+                            <button type="submit" class="nav-link btn-logout" style="background: none; border: none; color: inherit; padding: 0; font: inherit; cursor: pointer;">
+                                Logout
+                            </button>
+                        </form>
+                    {% else %}
+                        <a href="{% url 'login' %}" class="nav-link">Login</a>
+                        <a href="{% url 'register' %}" class="nav-link btn-register">Register</a>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <main>
+        {% if messages %}
+            <div class="messages">
+                {% for message in messages %}
+                    <div class="alert alert-{{ message.tags }}">
+                        {{ message }}
+                        <button class="close-btn" onclick="this.parentElement.style.display='none'">&times;</button>
+                    </div>
+                {% endfor %}
+            </div>
+        {% endif %}
+
+        {% block content %}
+        {% endblock %}
+    </main>
+
+    <footer class="footer">
+        <div class="footer-content">
+            <div class="footer-section">
+                <h3><i class="fas fa-mountain"></i> Adventure Gear</h3>
+                <p>Your trusted partner for outdoor adventures</p>
+            </div>
+            <div class="footer-section">
+                <h4>Quick Links</h4>
+                <ul>
+                    <li><a href="{% url 'home' %}">Home</a></li>
+                    <li><a href="#">About Us</a></li>
+                    <li><a href="#">Contact</a></li>
+                </ul>
+            </div>
+            <div class="footer-section">
+                <h4>Contact Info</h4>
+                <p><i class="fas fa-phone"></i> +977-1-1234567</p>
+                <p><i class="fas fa-envelope"></i> info@adventuregear.com</p>
+            </div>
+        </div>
+        <div class="footer-bottom">
+            <p>&copy; 2025 Adventure Gear Rental. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Auto-hide messages after 5 seconds
+        setTimeout(function() {
+            const messages = document.querySelectorAll('.alert');
+            messages.forEach(function(message) {
+                message.style.display = 'none';
+            });
+        }, 5000);
+    </script>
+</body>
+</html>
